@@ -71,6 +71,8 @@ class TransactionController extends Controller
 
         /** @var \Illuminate\Http\Request $httpRequest */
         $httpRequest = request();
+        // Ensure user ownership set
+        $data['user_id'] = (string) Auth::id();
         $this->transactionService->create($data, $httpRequest->hasFile('attachment') ? $httpRequest->file('attachment') : null);
         return redirect()->route('transactions.index')->with('status', 'Transaction created');
     }

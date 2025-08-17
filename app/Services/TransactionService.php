@@ -12,6 +12,9 @@ class TransactionService
     public function create(array $data, ?UploadedFile $attachment = null): Transaction
     {
         return DB::transaction(function () use ($data, $attachment) {
+            if (empty($data['occurred_at'])) {
+                $data['occurred_at'] = now();
+            }
             if ($attachment) {
                 $data['attachment_path'] = $attachment->store('attachments', 'local');
             }
@@ -24,6 +27,9 @@ class TransactionService
     public function update(Transaction $transaction, array $data, ?UploadedFile $attachment = null): Transaction
     {
         return DB::transaction(function () use ($transaction, $data, $attachment) {
+            if (empty($data['occurred_at'])) {
+                $data['occurred_at'] = $transaction->occurred_at ?? now();
+            }
             if ($attachment) {
                 if ($transaction->attachment_path) {
                     Storage::disk('local')->delete($transaction->attachment_path);
